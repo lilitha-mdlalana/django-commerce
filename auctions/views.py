@@ -1,14 +1,18 @@
+from email.mime import image
+from queue import Empty
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .models import User
+from .models import Category, User,Listing
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html",{
+        "listings": Listing.objects.all(),
+    })
 
 
 def login_view(request):
@@ -61,3 +65,23 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+def add_listing(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        image_url = request.POST['image_url']
+        description = request.POST['description']
+        price = request.POST['price']
+        category = request.POST['category']
+        if title == "" or image_url  == "" or description == "" or price == "":
+            return render(request, "auctions/add_listing.html",{
+                "message":"Fields cannot be empty"
+            })
+        else: 
+            listing = Listing.objects.create(title=title,description=description,starting_bid=price,image_url=image_url,category=Category.objects.get(name=category))
+            listing.save()
+            return redirect(reverse('index'))
+        
+    return render(request, "auctions/add_listing.html",{
+        "categories":Category.objects.all()
+    })
