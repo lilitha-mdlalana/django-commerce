@@ -1,12 +1,10 @@
-from email.mime import image
-from queue import Empty
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .models import Category, User,Listing
+from .models import User,Listing
 
 
 def index(request):
@@ -65,6 +63,7 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+    
 
 def add_listing(request):
     if request.method == 'POST':
@@ -78,10 +77,14 @@ def add_listing(request):
                 "message":"Fields cannot be empty"
             })
         else: 
-            listing = Listing.objects.create(title=title,description=description,starting_bid=price,image_url=image_url,category=Category.objects.get(name=category))
+            listing = Listing.objects.create(title=title,description=description,starting_bid=price,image_url=image_url,category=category)
             listing.save()
             return redirect(reverse('index'))
         
-    return render(request, "auctions/add_listing.html",{
-        "categories":Category.objects.all()
+    return render(request, "auctions/add_listing.html",)
+
+def listing_details(request,id):
+    listing_item = Listing.objects.get(pk=id)
+    return render (request,"auctions/listing-detail.html",{
+        "item":listing_item
     })

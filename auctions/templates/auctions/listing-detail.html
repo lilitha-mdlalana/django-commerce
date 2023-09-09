@@ -1,0 +1,37 @@
+{% extends 'auctions/layout.html' %}
+
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <img src="{{ item.image_url }}" style = "width: 100%; height : auto;"/>
+            </div>
+            <div class="col-6 d-flex flex-column justify-content-start">
+                
+                {% if user.is_authenticated %}
+                    <button class="btn btn-primary">Add to watchlist</button>
+                {% endif %}
+                    
+               <h1>{{item.title}}</h1>
+                <p>{{item.description}}</p> 
+               <p>Starting bid: R {{item.starting_bid}}</p>
+               {% if user.is_authenticated %}
+               <form action="">
+                <input type="integer" name="bid">
+                <button class="btn btn-primary">Place a bid</button>
+               </form>
+               <br>
+                <form action="">
+                    <label for="comment">Comment</label><br>
+    
+                    <textarea id="" cols="30" rows="5"></textarea><br>
+                    <button class="btn btn-primary">Comment</button>
+                </form>
+               {% endif %}
+                
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+    
